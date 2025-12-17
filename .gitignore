@@ -3,3 +3,5 @@ freee-oauth-app
 
 # Token file (contains secrets)
 token.json
+
+.env*

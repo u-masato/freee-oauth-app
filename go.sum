@@ -1,2 +1,4 @@
+github.com/u-masato/freee-api-go v0.1.1 h1:UHzN1C+EAffzB8mtO2YjAamFKLfZ3qYDFZ660MAuSwk=
+github.com/u-masato/freee-api-go v0.1.1/go.mod h1:leOmipKeExSxjyNPQOEkPwxazDkszAbjD7aU7RL3AZw=
 golang.org/x/oauth2 v0.34.0 h1:hqK/t4AKgbqWkdkcAeI8XLmbK+4m4G5YeQRrmiotGlw=
 golang.org/x/oauth2 v0.34.0/go.mod h1:lzm5WQJQwKZ3nwavOZ3IS5Aulzxi68dUSgRHujetwEA=

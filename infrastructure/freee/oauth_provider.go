@@ -6,39 +6,26 @@ import (
 
 	"freee-oauth-app/domain"
 
+	"github.com/u-masato/freee-api-go/auth"
 	"golang.org/x/oauth2"
-)
-
-const (
-	defaultAuthURL  = "https://accounts.secure.freee.co.jp/public_api/authorize"
-	defaultTokenURL = "https://accounts.secure.freee.co.jp/public_api/token"
 )
 
 // FreeeOAuthProvider はfreee APIのOAuth認可プロバイダー
 type FreeeOAuthProvider struct {
-	config *oauth2.Config
+	config *auth.Config
 }
 
 // NewFreeeOAuthProvider は新しいFreeeOAuthProviderを生成する
 func NewFreeeOAuthProvider(clientID, clientSecret, redirectURL string) *FreeeOAuthProvider {
-	return NewFreeeOAuthProviderWithEndpoint(clientID, clientSecret, redirectURL, defaultAuthURL, defaultTokenURL)
+	return &FreeeOAuthProvider{
+		config: auth.NewConfig(clientID, clientSecret, redirectURL, []string{"read", "write"}),
+	}
 }
 
 // NewFreeeOAuthProviderWithEndpoint はカスタムエンドポイントでFreeeOAuthProviderを生成する
 func NewFreeeOAuthProviderWithEndpoint(clientID, clientSecret, redirectURL, authURL, tokenURL string) *FreeeOAuthProvider {
-	config := &oauth2.Config{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		RedirectURL:  redirectURL,
-		Scopes:       []string{"read", "write"},
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  authURL,
-			TokenURL: tokenURL,
-		},
-	}
-
 	return &FreeeOAuthProvider{
-		config: config,
+		config: auth.NewConfigWithEndpoint(clientID, clientSecret, redirectURL, []string{"read", "write"}, authURL, tokenURL),
 	}
 }
 
@@ -54,7 +41,7 @@ func (p *FreeeOAuthProvider) Exchange(ctx context.Context, code string) (*domain
 		return nil, err
 	}
 
-	return domain.NewToken(token.AccessToken, token.RefreshToken, token.Expiry), nil
+	return domain.FromOAuth2Token(token), nil
 }
 
 // Refresh はリフレッシュトークンを使用してトークンを更新する
@@ -71,5 +58,5 @@ func (p *FreeeOAuthProvider) Refresh(ctx context.Context, token *domain.Token) (
 		return nil, err
 	}
 
-	return domain.NewToken(newToken.AccessToken, newToken.RefreshToken, newToken.Expiry), nil
+	return domain.FromOAuth2Token(newToken), nil
 }

@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"golang.org/x/oauth2"
+)
 
 const (
 	// トークンが無効とみなされる残り時間のしきい値
@@ -47,4 +51,22 @@ func (t *Token) MaskedAccessToken() string {
 		return t.AccessToken
 	}
 	return t.AccessToken[:maskedTokenLength] + "..."
+}
+
+// ToOAuth2Token はdomain.Tokenをoauth2.Tokenに変換する
+func (t *Token) ToOAuth2Token() *oauth2.Token {
+	return &oauth2.Token{
+		AccessToken:  t.AccessToken,
+		RefreshToken: t.RefreshToken,
+		Expiry:       t.Expiry,
+	}
+}
+
+// FromOAuth2Token はoauth2.Tokenからdomain.Tokenを生成する
+func FromOAuth2Token(t *oauth2.Token) *Token {
+	return &Token{
+		AccessToken:  t.AccessToken,
+		RefreshToken: t.RefreshToken,
+		Expiry:       t.Expiry,
+	}
 }
